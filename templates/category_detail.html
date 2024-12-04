@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Category Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ category.name }}</h2>
+    <p>{{ category.description }}</p>
+
+    <h3>Posts in this category:</h3>
+    <ul>
+        {% for post in category.post_set.all %}
+            <li>
+                <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

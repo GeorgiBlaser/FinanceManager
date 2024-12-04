@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Budgets{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Your Budgets</h2>
+
+    <!-- Бутон за връщане към профила -->
+    <a href="{% url 'profile' %}" class="btn btn-secondary mb-3">Back</a>
+
+    <a href="{% url 'create_budget' %}" class="btn btn-primary mb-3">Add New Budget</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for budget in page_obj %}
+            <tr>
+                <td>{{ budget.category.name }}</td>
+                <td>{{ budget.amount }}</td>
+                <td>{{ budget.from_date|date:"Y-m-d" }}</td>
+                <td>{{ budget.to_date|date:"Y-m-d" }}</td>
+                <td>
+                    <a href="{% url 'edit_budget' budget.id %}" class="btn btn-outline-secondary btn-sm" title="Edit">
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% url 'delete_budget' budget.id %}" class="btn btn-outline-secondary btn-sm" title="Delete">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Пагинация -->
+    <div class="pagination-container">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <li><span class="current">{{ num }}</span></li>
+            {% else %}
+                <li><a href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+</div>
+{% endblock %}

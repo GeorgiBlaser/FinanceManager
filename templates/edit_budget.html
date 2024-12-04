@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Budget{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Budget</h2>
+    <form id="editBudgetForm" method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div id="categoryError" class="text-danger small"></div>
+        <div id="amountError" class="text-danger small"></div>
+        <div id="dateError" class="text-danger small"></div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <a href="{% url 'budgets' %}" class="btn btn-secondary mt-2">Back to Budgets</a>
+</div>
+
+<script>
+    document.getElementById("editBudgetForm").addEventListener("submit", function (event) {
+        let valid = true;
+
+        const categoryField = document.getElementById("id_category");
+        const amountField = document.getElementById("id_amount");
+        const fromDateField = document.getElementById("id_from_date");
+        const toDateField = document.getElementById("id_to_date");
+
+        const categoryError = document.getElementById("categoryError");
+        const amountError = document.getElementById("amountError");
+        const dateError = document.getElementById("dateError");
+
+        // Reset error messages
+        categoryError.textContent = "";
+        amountError.textContent = "";
+        dateError.textContent = "";
+
+        // Category validation
+        if (!categoryField.value.trim()) {
+            categoryError.textContent = "Please select a category.";
+            valid = false;
+        }
+
+        // Amount validation
+        const amount = amountField.value.trim();
+        if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+            amountError.textContent = "Please enter a valid amount greater than 0.";
+            valid = false;
+        }
+
+        // Date validation
+        const fromDate = new Date(fromDateField.value.trim());
+        const toDate = new Date(toDateField.value.trim());
+
+        if (!fromDate || isNaN(fromDate.getTime())) {
+            dateError.textContent = "Please enter a valid 'From Date'.";
+            valid = false;
+        } else if (!toDate || isNaN(toDate.getTime())) {
+            dateError.textContent = "Please enter a valid 'To Date'.";
+            valid = false;
+        } else if (fromDate >= toDate) {
+            dateError.textContent = "'From Date' must be earlier than 'To Date'.";
+            valid = false;
+        }
+
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

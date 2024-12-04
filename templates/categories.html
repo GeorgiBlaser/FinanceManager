@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Categories{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Manage Categories</h2>
+
+    <!-- Бутон за връщане към профила -->
+    <a href="{% url 'profile' %}" class="btn btn-secondary mb-3">Back</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in page_obj %}
+            <tr>
+                <td>{{ category.name }}</td>
+                <td>{{ category.description }}</td>
+                <td>
+                    <a href="{% url 'edit_category' category.id %}" class="btn btn-outline-secondary btn-sm" title="Edit">
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                    </a>
+                    <a href="{% url 'delete_category' category.id %}" class="btn btn-outline-secondary btn-sm" title="Delete">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Пагинация -->
+    <div class="pagination-container">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if num == page_obj.number %}
+                <li><span class="current">{{ num }}</span></li>
+            {% else %}
+                <li><a href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+
+    <a href="{% url 'create_category' %}" class="btn btn-primary">Create New Category</a>
+</div>
+{% endblock %}

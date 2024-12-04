@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Category{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Category</h2>
+    <form id="editCategoryForm" method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div id="nameError" class="text-danger small"></div>
+        <div id="descriptionError" class="text-danger small"></div>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <a href="{% url 'categories' %}" class="btn btn-secondary mt-2">Back</a>
+</div>
+
+<script>
+    document.getElementById("editCategoryForm").addEventListener("submit", function (event) {
+        let valid = true;
+        const nameField = document.getElementById("id_name");
+        const descriptionField = document.getElementById("id_description");
+        const nameError = document.getElementById("nameError");
+        const descriptionError = document.getElementById("descriptionError");
+
+        // Reset error messages
+        nameError.textContent = "";
+        descriptionError.textContent = "";
+
+        // Name validation
+        if (nameField.value.trim().length < 3 || nameField.value.trim().length > 50) {
+            nameError.textContent = "Name must be between 3 and 50 characters.";
+            valid = false;
+        }
+
+        // Description validation
+        if (descriptionField.value.trim().length > 200) {
+            descriptionError.textContent = "Description must not exceed 200 characters.";
+            valid = false;
+        }
+
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

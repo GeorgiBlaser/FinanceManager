@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>All Posts</h2>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'create_post' %}" class="btn btn-success">Create New Post</a>
+    {% endif %}
+
+    <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+                {% if new_comments|get:post.id %}
+                    <span class="badge bg-warning text-dark">New</span>
+                {% endif %}
+                <p>by {{ post.author }} on {{ post.created_at }}</p>
+            </li>
+        {% empty %}
+            <p>No posts available.</p>
+        {% endfor %}
+    </ul>
+
+    <!-- Странициране -->
+    <div class="pagination-container">
+        {% if is_paginated %}
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="current">{{ num }}</li>
+                    {% else %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

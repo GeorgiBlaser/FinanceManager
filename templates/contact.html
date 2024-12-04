@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Contact Us</h2>
+    <form id="contactForm" method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div id="nameError" class="text-danger small"></div>
+        <div id="emailError" class="text-danger small"></div>
+        <div id="messageError" class="text-danger small"></div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("contactForm").addEventListener("submit", function (event) {
+        let valid = true;
+
+        const nameField = document.getElementById("id_name");
+        const emailField = document.getElementById("id_email");
+        const messageField = document.getElementById("id_message");
+
+        const nameError = document.getElementById("nameError");
+        const emailError = document.getElementById("emailError");
+        const messageError = document.getElementById("messageError");
+
+        // Reset error messages
+        nameError.textContent = "";
+        emailError.textContent = "";
+        messageError.textContent = "";
+
+        // Name validation
+        if (!nameField.value.trim()) {
+            nameError.textContent = "Please enter your name.";
+            valid = false;
+        }
+
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailField.value.trim() || !emailPattern.test(emailField.value.trim())) {
+            emailError.textContent = "Please enter a valid email address.";
+            valid = false;
+        }
+
+        // Message validation
+        if (!messageField.value.trim()) {
+            messageError.textContent = "Please enter your message.";
+            valid = false;
+        } else if (messageField.value.trim().length < 10) {
+            messageError.textContent = "Message must be at least 10 characters long.";
+            valid = false;
+        }
+
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}
