@@ -10,7 +10,7 @@ body {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    color: #333;
+    color: #2a2a63;
 }
 
 body {
@@ -138,5 +138,143 @@ form button {
 .small {
     font-size: 0.875rem;
 }
+
+/* Adaptability for tablets and smaller screens */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        margin: 10px auto;
+        max-width: 100%;
+    }
+
+    nav {
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        margin: 5px 10px;
+    }
+
+    footer {
+        font-size: 12px;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+}
+
+/* Adaptability for smartphones*/
+@media (max-width: 576px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav a {
+        display: block;
+        margin: 5px 0;
+    }
+
+    .pagination-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .badge {
+        font-size: 8px;
+        padding: 3px 6px;
+    }
+
+    button {
+        padding: 6px 12px;
+    }
+
+    footer {
+        padding: 5px 10px;
+    }
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Basic styles for dropdown menu items */
+.dropdown-menu a, .dropdown-menu button {
+    display: block;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    background: none;
+    width: 100%;
+    border: none;
+    box-sizing: border-box;
+}
+
+.dropdown-menu a:hover, .dropdown-menu button:hover {
+    background-color: #f8f9fa; /* Светъл фон */
+    color: #007bff; /* Акцентен цвят на текста */
+}
+
+.dropdown-menu a {
+    margin: 0;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.dropdown-item {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Adjustments for small screens */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static; /
+        width: 100%;
+    }
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.header-buttons .btn {
+    margin: 0;
+}
+
+
+
+
+
 
 

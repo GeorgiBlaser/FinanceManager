@@ -6,8 +6,8 @@
 <div class="container">
     <h2>Your Transactions</h2>
 
-    <!-- Бутон за връщане към профила -->
     <a href="{% url 'profile' %}" class="btn btn-secondary mb-3">Back</a>
+    <a href="{% url 'create_transaction' %}" class="btn btn-primary mb-3">Add New Transaction</a>
 
     <table class="table">
         <thead>
@@ -38,27 +38,22 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <!-- Пагинация -->
     <div class="pagination-container">
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
-            <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if num == page_obj.number %}
-                <li><span class="current">{{ num }}</span></li>
-            {% else %}
-                <li><a href="?page={{ num }}">{{ num }}</a></li>
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
             {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-            <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
-        {% endif %}
-    </ul>
-</div>
-
-
-    <a href="{% url 'create_transaction' %}" class="btn btn-primary">Add New Transaction</a>
+            {% for num in page_obj.paginator.page_range %}
+                {% if num == page_obj.number %}
+                    <li><span class="current">{{ num }}</span></li>
+                {% else %}
+                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

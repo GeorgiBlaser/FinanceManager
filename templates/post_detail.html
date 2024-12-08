@@ -4,15 +4,12 @@
 
 {% block content %}
 <div class="container">
-    <!-- Заглавие на поста -->
     <h2>{{ post.title }}</h2>
 
-    <!-- Информация за автора и датата на създаване -->
     <p><strong>Author:</strong> {{ post.author }}</p>
     <p><strong>Created on:</strong> {{ post.created_at }}</p>
     <p>{{ post.content }}</p>
 
-    <!-- Бутони за редакция и изтриване на поста (само за автора) -->
     {% if user.is_authenticated and user == post.author %}
         <div class="actions">
             <a href="{% url 'update_post' post.id %}" class="btn btn-outline-secondary btn-sm" title="Edit">
@@ -24,13 +21,11 @@
         </div>
     {% endif %}
 
-    <!-- Секция за коментари -->
     <h3>Comments</h3>
     <ul>
         {% for comment in post.comments.all %}
         <li>
             <strong>{{ comment.author }}</strong>: {{ comment.content }}
-            <!-- Бутони за изтриване на коментари -->
             {% if user.is_authenticated and user == comment.author %}
                 <form action="{% url 'delete_comment' comment.id %}" method="post" style="display:inline;">
                     {% csrf_token %}
@@ -51,8 +46,6 @@
             <p>No comments yet.</p>
         {% endfor %}
     </ul>
-
-    <!-- Форма за добавяне на коментар (само за логнати потребители) -->
     {% if user.is_authenticated %}
         <h4>Add a Comment</h4>
         <form method="post">

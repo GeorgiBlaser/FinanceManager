@@ -30,7 +30,7 @@ class RegisterView(CreateView):
         user = form.save(commit=False)
         user.set_password(form.cleaned_data['password'])
         user.save()
-        # Създаване на профил
+        # Create an account
         Profile.objects.get_or_create(user=user)
         return super().form_valid(form)
 
@@ -38,7 +38,7 @@ class RegisterView(CreateView):
 class LoginView(FormView):
     template_name = 'login.html'
     form_class = LoginForm
-    success_url = reverse_lazy('profile')  # Пренасочване към профила след логин
+    success_url = reverse_lazy('profile')  # Redirect to profile after login
 
     def form_valid(self, form):
         username = form.cleaned_data['username']
@@ -58,13 +58,13 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Финансова логика
+        # Financial logic
         total_budget = Budget.objects.filter(user=self.request.user).aggregate(Sum('amount'))['amount__sum'] or 0
         transactions = Transaction.objects.filter(category__user=self.request.user)
         total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
         total_expense = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
 
-        # Добавяне на данни към контекста
+        # Adding data to context
         context.update({
             'total_budget': total_budget,
             'total_income': total_income,
@@ -80,8 +80,7 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('profile')
 
     def get_object(self, queryset=None):
-        # Създаване на профил, ако липсва
-        profile, created = Profile.objects.get_or_create(user=self.request.user)
+        profile, created = Profile.objects.get_or_create(user=self.request.user)  # Create an account if you don't have one
         return profile
 
 
@@ -89,7 +88,7 @@ class CreatePostView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = CreatePostForm
     template_name = 'create_post.html'
-    success_url = reverse_lazy('post_list')  # След публикуване се връща към списъка с постове
+    success_url = reverse_lazy('post_list')  # After publishing, returns to the list of posts
     login_url = '/login/'
 
     def form_valid(self, form):
@@ -103,13 +102,12 @@ class ContactView(FormView):
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
-        # Запазване на съобщението в базата данни
+        # Save the message in the database
         ContactMessage.objects.create(
             name=form.cleaned_data['name'],
             email=form.cleaned_data['email'],
             message=form.cleaned_data['message'],
         )
-        # Показване на съобщение за успех
         messages.success(self.request, "Your message has been sent successfully!")
         return super().form_valid(form)
 
@@ -135,18 +133,22 @@ class PostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
-    template_name = 'post_detail.html'  # Шаблон за детайлите
-    context_object_name = 'post'  # Име на променливата за достъп в шаблона
+    template_name = 'post_detail.html'
+    context_object_name = 'post'
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.object = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['comment_form'] = CommentForm()  # Формата за нов коментар
+        context['comment_form'] = CommentForm()
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if request.user == self.object.author:
-            # Актуализиране на `last_viewed`
+            # Update `last_viewed`
             self.object.last_viewed = timezone.now()
             self.object.save()
         return super().get(request, *args, **kwargs)
@@ -170,7 +172,7 @@ class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('post_list')
 
     def test_func(self):
-        # Проверява дали текущият потребител е автор на поста
+        # Checks if the current user is the author of the post
         post = self.get_object()
         return self.request.user == post.author
 
@@ -181,20 +183,20 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('post_list')
 
     def test_func(self):
-        # Проверява дали текущият потребител е автор на поста
+        # Checks if the current user is the author of the post
         post = self.get_object()
         return self.request.user == post.author
 
 
 def logout_view(request):
-    logout(request)  # Излизане на потребителя
+    logout(request)
     return redirect('home')
 
 
 @login_required
 def budget_list_view(request):
     budgets = Budget.objects.filter(user=request.user)
-    paginator = Paginator(budgets, 5)  # По 10 елемента на страница
+    paginator = Paginator(budgets, 5)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -208,12 +210,12 @@ def create_budget_view(request):
         form = BudgetForm(request.POST)
         if form.is_valid():
             budget = form.save(commit=False)
-            budget.user = request.user  # Свързваме бюджета с текущия потребител
+            budget.user = request.user  # Associate the budget with the current user
             budget.save()
-            return redirect('budgets')  # Пренасочване към списъка с бюджети
+            return redirect('budgets')  # Redirect to budget list
     else:
         form = BudgetForm()
-        form.fields['category'].queryset = Category.objects.filter(user=request.user)  # Ограничаваме категориите
+        form.fields['category'].queryset = Category.objects.filter(user=request.user)  # Limiting the categories
     return render(request, 'create_budget.html', {'form': form})
 
 
@@ -243,7 +245,7 @@ def delete_budget_view(request, pk):
 @login_required
 def category_list_view(request):
     categories = Category.objects.filter(user=request.user)
-    paginator = Paginator(categories, 5)  # По 10 елемента на страница
+    paginator = Paginator(categories, 5)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -254,7 +256,7 @@ def category_list_view(request):
 @login_required
 def transaction_list_view(request):
     transactions = Transaction.objects.filter(category__user=request.user).select_related('category')
-    paginator = Paginator(transactions, 5)  # По 10 елемента на страница
+    paginator = Paginator(transactions, 5)
 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -306,11 +308,11 @@ def create_transaction_view(request):
             transaction = form.save(commit=False)
             transaction.category.user = request.user
 
-            # Проверка дали транзакцията е разход (различна от "Income")
+            # Checking if the transaction is an expense (different from "Income")
             if transaction.category.name.lower() != 'income':
-                transaction.amount = -abs(transaction.amount)  # Принудително задава отрицателна стойност
+                transaction.amount = -abs(transaction.amount)  # Force a negative value
 
-                # Намаляване на Total Budget
+                # Reducing Total Budget
                 user_budget = Budget.objects.filter(user=request.user, category=transaction.category).first()
                 if user_budget:
                     user_budget.amount -= abs(transaction.amount)
@@ -353,7 +355,7 @@ def delete_comment_view(request, pk):
         comment.delete()
         return HttpResponseRedirect(reverse('post_detail', args=[comment.post.id]))
     else:
-        return HttpResponseRedirect(reverse('home'))  # Няма право
+        return HttpResponseRedirect(reverse('home'))
 
 
 def custom_permission_denied_view(request, exception):

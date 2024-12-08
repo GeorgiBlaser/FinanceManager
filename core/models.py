@@ -55,7 +55,7 @@ class Post(models.Model):
     last_viewed = models.DateTimeField(null=True, blank=True)
 
     def has_new_comments(self):
-        """Проверява дали има нови коментари след последното разглеждане."""
+        # Checks if there are new comments since the last viewing.
         if self.last_viewed:
             return self.comments.filter(created_at__gt=self.last_viewed).exists()
         return self.comments.exists()
@@ -98,11 +98,9 @@ def save_user_profile(sender, instance, **kwargs):
 
 @receiver(post_delete, sender=Transaction)
 def adjust_budget_on_transaction_delete(sender, instance, **kwargs):
-    # Уверяваме се, че транзакцията е разход
+    # Make sure that the transaction is an expense
     if instance.amount < 0:
-        # Намерете свързания бюджет за категорията
         budget = Budget.objects.filter(user=instance.category.user, category=instance.category).first()
         if budget:
-            # Увеличаваме бюджета със стойността на транзакцията
             budget.amount += abs(instance.amount)
             budget.save()

@@ -4,17 +4,13 @@
 
 {% block content %}
 <div class="container">
-    <h2>Welcome, {{ user.username }}</h2>
-
-    <!-- Финансова информация -->
+    <h2>Welcome, {{ user.profile.first_name }} {{ user.profile.last_name }}</h2>
     <div class="financial-overview">
         <h3>Financial Overview</h3>
         <p><strong>Total Budget:</strong> {{ total_budget }}</p>
         <p><strong>Total Income:</strong> {{ total_income }}</p>
         <p><strong>Total Expense:</strong> {{ total_expense }}</p>
     </div>
-
-    <!-- Линкове към допълнителни функционалности -->
     <div class="links" style="margin-top: 20px;">
         <a href="{% url 'categories' %}" class="btn btn-secondary">Manage Categories</a>
         <a href="{% url 'transactions' %}" class="btn btn-secondary">View Transactions</a>
